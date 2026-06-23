@@ -238,9 +238,11 @@ async function playlist(url) {
         let chnoAttr = "";
 
         if (startChno !== null) {
-            chnoAttr =
-                ` tvg-chno="${startChno}"`;
-            startChno++;
+            if (startChno > 0) {
+                chnoAttr =
+                    ` tvg-chno="${startChno}"`;
+                startChno++;
+            }
         } else if (
             channel.chno !== undefined &&
             channel.chno !== null
@@ -334,31 +336,98 @@ async function statusPage(request) {
     const host =
         new URL(request.url).host;
 
-    const html =
+    const data =
+        await getAppData();
+
+    let html =
         `
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
-<title>Samsung TV Plus</title>
+<title>Samsung TV Plus for Channels</title>
 </head>
 <body>
-<h1>Samsung TV Plus</h1>
 
-<p>
-Playlist:
-<a href="/playlist.m3u8">
+<h1>Regions & Groups</h1>
+
+<h2>All</h2>
+
+Playlist URL:
+<b>
+<a href="https://${host}/playlist.m3u8">
 https://${host}/playlist.m3u8
 </a>
-</p>
+</b>
+<br>
 
-<p>
-EPG:
-<a href="/epg.xml">
+EPG URL:
+<b>
+<a href="https://${host}/epg.xml">
 https://${host}/epg.xml
 </a>
-</p>
+</b>
+`;
 
+    for (const [region, regionData] of Object.entries(data.regions)) {
+
+        const encodedRegion =
+            encodeURIComponent(region);
+
+        html +=
+            `
+<h2>${regionData.name}</h2>
+
+Playlist URL:
+<b>
+<a href="https://${host}/playlist.m3u8?regions=${encodedRegion}">
+https://${host}/playlist.m3u8?regions=${encodedRegion}
+</a>
+</b>
+<br>
+
+EPG URL:
+<b>
+<a href="https://${host}/epg.xml?regions=${encodedRegion}">
+https://${host}/epg.xml?regions=${encodedRegion}
+</a>
+</b>
+
+<ul>
+`;
+
+        const groups = new Set();
+
+        for (const channel of Object.values(
+                regionData.channels || {}
+            )) {
+
+            if (channel.group) {
+                groups.add(channel.group);
+            }
+        }
+
+        for (const group of [...groups].sort()) {
+
+            const encodedGroup =
+                encodeURIComponent(group);
+
+            html +=
+                `
+<li>
+<a href="https://${host}/playlist.m3u8?regions=${encodedRegion}&groups=${encodedGroup}">
+${group}
+</a>
+</li>
+`;
+        }
+
+        html += `
+</ul>
+`;
+    }
+
+    html += `
 </body>
 </html>
 `;
