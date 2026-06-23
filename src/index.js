@@ -198,7 +198,23 @@ async function playlist(url) {
         );
     });
 
-    let output = "#EXTM3U\n";
+    // 根据当前 Playlist 生成对应的 EPG URL
+    let epgUrl =
+        `${url.origin}/epg.xml`;
+
+    const regionParts =
+        regionParam.split("|");
+
+    if (
+        regionParts.length === 1 &&
+        regionParam.toLowerCase() !== "all"
+    ) {
+        epgUrl +=
+            `?regions=${encodeURIComponent(regionParam)}`;
+    }
+
+    let output =
+        `#EXTM3U x-tvg-url="${epgUrl}"\n`;
 
     for (const id of channelIds) {
         const channel = channels[id];
