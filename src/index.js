@@ -1,8 +1,11 @@
-const APP_URL = "https://i.mjh.nz/SamsungTVPlus/.channels.json.gz";
+const APP_URL =
+    "https://i.mjh.nz/SamsungTVPlus/.channels.json.gz";
 
-const EPG_URL = "https://i.mjh.nz/SamsungTVPlus/{region}.xml.gz";
+const EPG_URL =
+    "https://i.mjh.nz/SamsungTVPlus/{region}.xml.gz";
 
-const PLAYBACK_URL = "https://jmp2.uk/{slug}";
+const PLAYBACK_URL =
+    "https://jmp2.uk/{slug}";
 
 const APP_CACHE_TIME = 3600; // 1小时
 const EPG_CACHE_TIME = 3600; // 1小时
@@ -21,6 +24,9 @@ export default {
 
                 case "/epg.xml":
                     return await epg(url);
+
+                case "/favicon.ico":
+                    return favicon();
 
                 default:
                     return new Response("Not Found", {
@@ -345,6 +351,46 @@ async function epg(url) {
     return response;
 }
 
+function favicon() {
+
+    return new Response(
+        `<svg xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 100 100">
+
+            <defs>
+                <linearGradient id="g"
+                                x1="0"
+                                y1="0"
+                                x2="1"
+                                y2="1">
+                    <stop offset="0%"
+                          stop-color="#2563eb"/>
+                    <stop offset="100%"
+                          stop-color="#0891b2"/>
+                </linearGradient>
+            </defs>
+
+            <rect width="100"
+                  height="100"
+                  rx="20"
+                  fill="url(#g)"/>
+
+            <text x="50%"
+                  y="58%"
+                  text-anchor="middle"
+                  font-size="55"
+                  fill="white">
+                TV
+            </text>
+
+        </svg>`, {
+            headers: {
+                "Content-Type": "image/svg+xml"
+            }
+        }
+    );
+}
+
 async function statusPage(request) {
 
     const host = new URL(request.url).host;
@@ -456,6 +502,8 @@ async function statusPage(request) {
 <head>
 <meta charset="utf-8">
 <title>Samsung TV Plus</title>
+
+<link rel="icon" href="/favicon.ico">
 
 <style>
 
