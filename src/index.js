@@ -399,23 +399,32 @@ async function statusPage(request) {
 
     let cards = "";
 
+    const totalChannels = Object.values(data.regions).reduce(
+        (sum, r) => sum + Object.keys(r.channels || {}).length, 0
+    );
+
     // All 卡片
     cards +=
         `
     <div class="region-card">
         <div class="card-summary">
             <div class="title">All</div>
+            <div class="stats-line">
+                ${totalChannels} Channels
+            </div>
         </div>
 
         <div class="content">
-            <div class="copy-item"
-                 data-copy="https://${host}/playlist.m3u8">
-                Playlist URL
-            </div>
+            <div class="url-row">
+                <div class="copy-item"
+                     data-copy="https://${host}/playlist.m3u8">
+                    Playlist URL
+                </div>
 
-            <div class="copy-item"
-                 data-copy="https://${host}/epg.xml">
-                EPG URL
+                <div class="copy-item"
+                     data-copy="https://${host}/epg.xml">
+                    EPG URL
+                </div>
             </div>
         </div>
     </div>
@@ -609,6 +618,10 @@ background:#0891b2;
     margin-top:8px;
     opacity:.8;
     font-size:13px;
+}
+
+.region-card:first-child .stats-line{
+    display:block;
 }
 
 .region-card:hover .stats-line{
