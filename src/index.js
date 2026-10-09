@@ -510,6 +510,8 @@ async function statusPage(request) {
 <html>
 <head>
 <meta charset="utf-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1">
 <title>Samsung TV Plus</title>
 
 <link rel="icon" href="/favicon.ico">
@@ -735,6 +737,104 @@ background:#0891b2;
     transform:translate(-50%,-50%) scale(1);
 }
 
+@media (max-width:768px){
+
+body{
+    overflow:auto;
+}
+
+.container{
+    flex-direction:column;
+    height:auto;
+    min-height:100vh;
+}
+
+.region-card{
+    flex:none;
+    flex-direction:column;
+    align-items:flex-start;
+    justify-content:flex-start;
+    min-height:72px;
+    padding:16px 20px;
+}
+
+.region-card:hover{
+    flex:none;
+}
+
+.container:hover .region-card{
+    filter:none;
+}
+
+.container:hover .region-card:hover{
+    filter:none;
+}
+
+.card-summary{
+    text-align:left;
+}
+
+.region-card:hover .card-summary{
+    position:static;
+}
+
+.title{
+    font-size:20px;
+}
+
+.title-br{
+    display:none;
+}
+
+.stats-line{
+    display:block;
+    font-size:14px;
+}
+
+.content{
+    position:static;
+    width:100%;
+    max-height:0;
+    margin-top:0;
+    overflow:hidden;
+    opacity:0;
+    transition:max-height .4s, opacity .3s, margin-top .3s;
+}
+
+.region-card:hover .content{
+    opacity:0;
+}
+
+.region-card.open .content{
+    max-height:60vh;
+    margin-top:15px;
+    overflow-y:auto;
+    opacity:1;
+}
+
+.url-row{
+    flex-direction:column;
+}
+
+.copy-item{
+    padding:14px;
+    min-height:44px;
+}
+
+.copy-item:active{
+    background:rgba(255,255,255,.25);
+}
+
+.group{
+    padding:10px 16px;
+}
+
+.groups{
+    justify-content:center;
+}
+
+}
+
 </style>
 </head>
 
@@ -766,6 +866,30 @@ function showToast(text){
 
     }, 1500);
 }
+
+document
+.querySelectorAll(".region-card")
+.forEach(card => {
+
+    card.addEventListener("click", (e) => {
+
+        if (e.target.closest(".copy-item")) {
+            return;
+        }
+
+        const wasOpen =
+            card.classList.contains("open");
+
+        document
+        .querySelectorAll(".region-card.open")
+        .forEach(c => c.classList.remove("open"));
+
+        if (!wasOpen) {
+            card.classList.add("open");
+        }
+    });
+
+});
 
 document
 .querySelectorAll(".copy-item")
